@@ -1,0 +1,24 @@
+# To install all pip install -r requirements.txt
+numpy
+pandas
+
+# Face recognition
+scikit-learn
+dlib-bin 
+# or use this https://github.com/z-mahmud22/Dlib_Windows_Python3.x
+
+git+https://github.com/ageitgey/face_recognition_models
+setuptools
+
+supabase
+
+bcrypt # for hashing
+
+segno # for QR code generator
+
+pillow # For image processing
+
+streamlit # 
+
+
+ 
