@@ -3,6 +3,7 @@ import io
 import numpy as np
 import librosa
 import streamlit as st
+import traceback
 
 @st.cache_resource
 def load_voice_encoder():
@@ -11,14 +12,14 @@ def load_voice_encoder():
 def get_voice_embeddings(audio_bytes):
     try:
         encoder = load_voice_encoder()
-        audio, sample_rate = librosa.load(io.BytesIO(audio_bytes), sr = 18000)
+        audio, sample_rate = librosa.load(io.BytesIO(audio_bytes), sr = 16000)
         wav = preprocess_wav(audio)
 
         embedding = encoder.embed_utterance(wav)
-        
+
         return embedding.tolist()
     except Exception as e:
-        print(e.with_traceback)
+        traceback.print_exc()
         st.error("Voice recoginition error")
         return None
 
@@ -46,7 +47,7 @@ def process_bulk_audio(audio_bytes, candidate_dict, threshold=0.65):
     try:
         encoder = load_voice_encoder()
 
-        audio, sr = librosa.load(io.BytesIO(audio_bytes), sr=18000)
+        audio, sr = librosa.load(io.BytesIO(audio_bytes), sr=16000)
 
         segments = librosa.effects.split(audio, top_db=30)
 
@@ -65,12 +66,12 @@ def process_bulk_audio(audio_bytes, candidate_dict, threshold=0.65):
             sid, score = identify_speaker(embeddings, candidate_dict, threshold)
 
             if sid:
-                if sid not in identify_speaker or score > identify_results[sid]:
+                if sid not in identify_results or score > identify_results[sid]:
                     identify_results[sid] = score
 
         return identify_results
     except Exception as e:
-        print(e.with_traceback)
+        traceback.print_exc()
         st.error("Bulk Process Error!")
         return {}
 

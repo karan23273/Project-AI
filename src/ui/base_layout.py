@@ -71,8 +71,8 @@ def style_font():
         }
         button[kind='secondary']{
             border-radius: 12px !important;
-            background: transparent !important;
-            color: Black !important;
+            background: #CB2957 !important;
+            color: White !important;
             font-weight: 600 !important;
             padding: 0.65rem 1.2rem !important;
             transition: all 0.2s ease !important;

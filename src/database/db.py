@@ -34,3 +34,38 @@ def teacher_login(teacher_user_name, teacher_user_pass):
 def get_all_students():
     response = supabase.table('student').select('*').execute()
     return response.data
+
+def create_student(new_name, face_embedding=None, voice_embedding=None):
+    data={
+        'student_user_name': new_name,
+        'face_embedding': face_embedding,
+        'voice_embedding': voice_embedding
+    }
+    response = supabase.table('student').insert(data).execute()
+    return response.data
+
+def create_subject(teacher_id, course_code, course_name, course_section):
+    data={
+        'subject_name': course_name,
+        'subject_code': course_code,
+        'section': course_section,
+        'teacher_id': teacher_id
+    }
+    response = supabase.table('subject').insert(data).execute()
+    return response.data 
+
+def get_teacher_subject(teacher_id):
+    response = supabase.table('subject').select('*, subject_students(count), attendance_log(timestamp)').eq('teacher_id', teacher_id).execute()
+    subjects = response.data
+
+    for sub in subjects:
+        sub['total_students'] = sub.get("subject_students", [{}])[0].get('count', 0) if sub.get('subject_students') else 0
+        attendance = sub.get('attendance_log', [])
+        unique_sessions = len(set(log['timestamp'] for log in attendance))
+        sub['total_classes'] = unique_sessions
+
+
+        sub.pop('subject_students', None)
+        sub.pop('attendance_log', None)
+
+    return subjects

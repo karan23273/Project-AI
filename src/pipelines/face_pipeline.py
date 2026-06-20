@@ -11,14 +11,13 @@ from src.database.db import get_all_students
 def load_dlib_models():
     detector = dlib.get_frontal_face_detector()
 
-
     # shape predictor
     sp = dlib.shape_predictor(
         face_recognition_models.pose_predictor_model_location()
     )  
 
     # face recognising model 
-    facerec = dlib.face_recognition_models_v1(
+    facerec = dlib.face_recognition_model_v1(
         face_recognition_models.face_recognition_model_location()
     )
 
@@ -32,7 +31,7 @@ def get_face_embeddings(image_np):
     encodings = []
     for face in faces:
         shape = sp(image_np, face)
-        face_descriptor = facerec.compute_face_detector(image_np, shape, 1) #128 embeddings
+        face_descriptor = facerec.compute_face_descriptor(image_np, shape, 1) #128 embeddings
 
         encodings.append(np.array(face_descriptor))
     
@@ -65,8 +64,8 @@ def get_trained_model():
 
     try:
         clf.fit(X,Y)
-    except ValueError:
-        pass 
+    except ValueError as e:
+        st.warning(f"Classifier training skipped: {e}")
 
     return {'clf':clf, 'X':X, 'Y':Y}
 
@@ -99,12 +98,12 @@ def predict_attendance(class_image_np):
 
         student_embedding = x_train[y_train.index(predicted_id)]
 
-        best_match_score = np.linalg(student_embedding - encoding)
+        best_match_score = np.linalg.norm(student_embedding - encoding)
 
-        resemblence_threshold = 0.6
+        resemblance_threshold = 0.6
 
-        if best_match_score <= resemblence_threshold:
-            detected_student[encoding] = True
+        if best_match_score <= resemblance_threshold:
+            detected_student[predicted_id] = True
     
     return detected_student, all_student, len(encodings)
 
