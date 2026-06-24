@@ -4,11 +4,11 @@ import io # for binary data
 
 @st.dialog("Share Class Link")
 def share_subject_dialog(subject_name, subject_code):
-    app_domain = "http://localhost:8501/"
+    app_domain = "http://localhost:8501"
     join_url = f"{app_domain}/?join-code={subject_code}"
     
     QR = segno.make(join_url)
-    out = io.BytesIO()
+    out = io.BytesIO()   
     QR.save(out, kind='png', scale=10, border=1)
     
     col1, col2 = st.columns(2)

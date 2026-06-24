@@ -58,14 +58,15 @@ def get_trained_model():
             Y.append(student.get('student_id'))
 
     if len(X) == 0:
-        return None
+        return 0
     
     clf = SVC(kernel='linear', probability=True, class_weight='balanced')
 
     try:
         clf.fit(X,Y)
     except ValueError as e:
-        st.warning(f"Classifier training skipped: {e}")
+        # st.warning(f"Classifier training skipped: {e}")
+        pass
 
     return {'clf':clf, 'X':X, 'Y':Y}
 
